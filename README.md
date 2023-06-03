@@ -28,3 +28,52 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+## ipfs config
+
+```
+...
+"API": {
+    "HTTPHeaders": {
+      "Access-Control-Allow-Methods": [
+        "PUT",
+        "POST"
+      ],
+      "Access-Control-Allow-Origin": [
+        "https://dev.webui.ipfs.io",
+        "http://localhost:3000",
+        "http://127.0.0.1:5001",
+        "https://webui.ipfs.io"
+      ]
+    }
+  },
+...
+"Gateway": {
+    "APICommands": [],
+    "HTTPHeaders": {
+      "Access-Control-Allow-Headers": [
+        "X-Requested-With",
+      	"Access-Control\-Expose\-Headers",
+        "Range",
+        "User-Agent"
+      ],
+      "Access-Control-Allow-Methods": [
+ 	"POST",
+        "GET"
+      ],
+      "Access-Control-Allow-Origin": [
+        "*"
+      ]
+    },
+    "NoDNSLink": false,
+    "NoFetch": false,
+    "PathPrefixes": [],
+    "PublicGateways": null,
+    "RootRedirect": ""
+  },
+```
+
+### ipfs setup
+
+run `ipfs daemon` after/before `npm run dev`
+dont forget uploadthing api key (for now)
