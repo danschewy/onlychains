@@ -5,7 +5,11 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import {
+  ConnectButton,
+  getDefaultWallets,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig, mainnet } from "wagmi";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
@@ -31,6 +35,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={[mainnet]}>
+        <section
+          data-testid="header"
+          className="absolute top-0 flex w-screen flex-row justify-between p-4"
+        >
+          <span className="text-xl font-extrabold tracking-tight text-white ">
+            Only<span className="text-[hsl(280,100%,70%)]">Chains</span>
+          </span>
+          <ConnectButton />
+        </section>
         <Component {...pageProps} />
       </RainbowKitProvider>
     </WagmiConfig>

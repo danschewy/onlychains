@@ -1,28 +1,15 @@
-// Import necessary modules
-import fs from "fs";
 import { create } from "ipfs-http-client";
 
-// export interface Options {
-//     host?: string
-//     port?: number
-//     protocol?: string
-//     headers?: Headers | Record<string, string>
-//     timeout?: number | string
-//     apiPath?: string
-//     url?: URL|string|Multiaddr
-//     ipld?: Partial<IPLDOptions>
-//     agent?: HttpAgent | HttpsAgent
-//   }
+export const ipfs = create({
+  host: "127.0.0.1",
+  port: 5001,
+  protocol: "http",
+});
 
 // This function uploads a file to IPFS and returns the CID
-export async function uploadToIPFS(filePath: string): Promise<string> {
+export async function uploadToIPFS(filePath: string): Promise<boolean> {
   try {
     // connect to the IPFS API server
-    const ipfs = create({
-      host: "127.0.0.1",
-      port: 5001,
-      protocol: "http",
-    });
     try {
       // Ping the IPFS node
       await ipfs.id();
@@ -53,7 +40,28 @@ export async function uploadToIPFS(filePath: string): Promise<string> {
     console.log("added file", result);
 
     // return the CID
-    return "yay";
+    return true;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
+}
+
+export async function getImages() {
+  try {
+    // connect to the IPFS API server
+    try {
+      // Ping the IPFS node
+      await ipfs.id();
+      console.log("******************Connected to IPFS.");
+    } catch (error) {
+      console.error("****************Failed to connect to IPFS:", error);
+      throw error;
+    }
+
+    const result = ipfs.files.ls("/");
+
+    return result;
   } catch (error) {
     console.error("Error uploading file:", error);
     throw error;
