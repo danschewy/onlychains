@@ -2,18 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
-}
-
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  provider = "postgres"
+  url      = env("DATABASE_URL")
 }
 
 model Session {
@@ -25,36 +19,21 @@ model Session {
 }
 
 model User {
-    id        String   @id @default(cuid())
-    walletId String?
-    displayName String?
-     image         String?
-  bio           String?
-  following     Follows[] @relation("follower")
-  followedBy    Follows[] @relation("following")
-  sessions      Session[]
-  createdAt     DateTime? @default(now())
-  karma         Int?
-  facebookUrl   String?
-  twitterUrl    String?
-  instagramUrl  String?
-  linkedinUrl   String?
-  pinterestUrl  String?
-  youtubeUrl    String?
-  githubUrl     String?
-  slackUrl      String?
-  redditUrl     String?
-  gender           String?
-  location      String?
-  title         String?
-  level         Int?
-  language      String?
+  id          String    @id @default(cuid())
+  role        Role      @default(USER)
+  image       String?
+  displayName String?
+  bio         String?
+  addressETH  String?
+  addressBTC  String?
+  gender      String?
+  following   Follows[] @relation("follower")
+  followedBy  Follows[] @relation("following")
+  sessions    Session[]
+  createdAt   DateTime? @default(now())
+  language    String?
   // Payment
-  addressBTC    String?
-  addressETH    String?
-  addressADA    String?
 }
-
 
 model Follows {
   followerId  String
@@ -74,19 +53,35 @@ model VerificationToken {
 }
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  title       String?
-  content     String?
-  postedDate  DateTime? @default(now())
-  image       String?
-  userId      String?
-  followingId String?
-  votes_up    Int?
-  votes_down  Int?
-  updatedAt   DateTime? @updatedAt
-  nonce       String? // Filter server and client side time millisecond offset bugfix
-  // author        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // // following     Follows[] @relation("follower")
-  // followedBy    Follows[] @relation("following")
-  // sessions      Session[]
+  id         Int       @id @default(autoincrement())
+  title      String?
+  content    String?
+  postedDate DateTime? @default(now())
+  images     String[]
+  userId     String?
+  votes_up   Int?
+  votes_down Int?
+  updatedAt  DateTime? @updatedAt
+  Payment    Payment[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  CREATOR
+}
+
+model Payment {
+  id          Int         @id @default(autoincrement())
+  paymentType PaymentType @default(TIP)
+  payer       String?
+  payee       String
+  amount      Decimal?
+  Post        Post?       @relation(fields: [postId], references: [id])
+  postId      Int?
+}
+
+enum PaymentType {
+  TIP
+  PURCHASE
 }
