@@ -15,3 +15,78 @@ model Example {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id        String   @id @default(cuid())
+    walletId String?
+    displayName String?
+     image         String?
+  bio           String?
+  following     Follows[] @relation("follower")
+  followedBy    Follows[] @relation("following")
+  sessions      Session[]
+  createdAt     DateTime? @default(now())
+  karma         Int?
+  facebookUrl   String?
+  twitterUrl    String?
+  instagramUrl  String?
+  linkedinUrl   String?
+  pinterestUrl  String?
+  youtubeUrl    String?
+  githubUrl     String?
+  slackUrl      String?
+  redditUrl     String?
+  gender           String?
+  location      String?
+  title         String?
+  level         Int?
+  language      String?
+  // Payment
+  addressBTC    String?
+  addressETH    String?
+  addressADA    String?
+}
+
+
+model Follows {
+  followerId  String
+  followingId String
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  following   User   @relation("following", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String?
+  content     String?
+  postedDate  DateTime? @default(now())
+  image       String?
+  userId      String?
+  followingId String?
+  votes_up    Int?
+  votes_down  Int?
+  updatedAt   DateTime? @updatedAt
+  nonce       String? // Filter server and client side time millisecond offset bugfix
+  // author        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // // following     Follows[] @relation("follower")
+  // followedBy    Follows[] @relation("following")
+  // sessions      Session[]
+}

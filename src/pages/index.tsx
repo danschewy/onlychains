@@ -22,8 +22,6 @@ export const getServerSideProps = async () => {
 const Home = ({
   images,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  console.log(images, "images");
   return (
     <>
       <Head>
@@ -32,7 +30,7 @@ const Home = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      <main className="absolute flex h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex h-full flex-col items-center justify-center gap-12 px-4 py-16">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Only<span className="text-[hsl(280,100%,70%)]">Chains</span>

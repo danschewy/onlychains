@@ -7,7 +7,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const cid = req.query.cid;
-  console.log("here");
   // get the image from local ipfs
   try {
     await ipfs.id();
@@ -16,8 +15,16 @@ export default async function handler(
     for await (const chunk of ipfsCat) {
       imageBuffer.push(chunk);
     }
+    let decryptedImage;
+    try{
+      decryptedImage =  Buffer.concat(imageBuffer);
+
+    } catch (error) {
+      decryptedImage = Buffer.concat(imageBuffer);
+    }
+
     res.setHeader("Content-Type", "image/jpeg");
-    res.end(Buffer.concat(imageBuffer));
+    res.end(decryptedImage);
   } catch (error) {
     console.error("***Failed to connect to IPFS:", error);
     throw error;
