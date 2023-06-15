@@ -77,3 +77,11 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 run `ipfs daemon` after/before `npm run dev`
 dont forget uploadthing api key (for now)
+
+Creator page for each person
+Card to unlock a photo/subscribe to individual
+
+view subscriptions if logged in and authentication
+news page
+top creators list
+feed of all latest posts

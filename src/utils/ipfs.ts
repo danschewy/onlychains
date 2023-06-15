@@ -1,4 +1,5 @@
 import { create } from "ipfs-http-client";
+import { encrypt } from "./encryption";
 
 export const ipfs = create({
   host: "127.0.0.1",
@@ -13,31 +14,22 @@ export async function uploadToIPFS(filePath: string): Promise<boolean> {
     try {
       // Ping the IPFS node
       await ipfs.id();
-      console.log("******************Connected to IPFS.");
     } catch (error) {
-      console.error("****************Failed to connect to IPFS:", error);
       throw error;
     }
     // read the file
     const file = await (await fetch(filePath)).blob();
-
-    console.log("fetched file", filePath);
+    const fileText = await file.text();
+    // const encryptedContent = encrypt(fileText);
 
     // convert the file to a format that can be uploaded to IPFS
     const newId = crypto.randomUUID();
-    const extension = filePath.split(".")[-1];
-    const fileName = "/" + newId + "." + (extension ?? "jpg");
-    const fileForIpfs = {
-      path: fileName,
-      content: file,
-    };
+    const fileName = "/" + newId + '.jpeg';
 
     // upload the file
-    const result = await ipfs.files.write(fileName, file, {
+    await ipfs.files.write(fileName, fileText, {
       create: true,
     });
-    //const result = await ipfs.add(fileForIpfs);
-    console.log("added file", result);
 
     // return the CID
     return true;
@@ -53,9 +45,7 @@ export async function getImages() {
     try {
       // Ping the IPFS node
       await ipfs.id();
-      console.log("******************Connected to IPFS.");
     } catch (error) {
-      console.error("****************Failed to connect to IPFS:", error);
       throw error;
     }
 
@@ -63,7 +53,6 @@ export async function getImages() {
 
     return result;
   } catch (error) {
-    console.error("Error uploading file:", error);
     throw error;
   }
 }
