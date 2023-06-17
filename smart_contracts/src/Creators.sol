@@ -6,8 +6,8 @@ contract Creators {
 
     mapping (address => CreatorContent) public creators;
     
-    function newCreator(string calldata uri) public {
-        CreatorContent addy = new CreatorContent(uri, msg.sender);
+    function newCreator(string calldata uri, address currency) public {
+        CreatorContent addy = new CreatorContent(uri, msg.sender, currency);
         creators[msg.sender] = addy;
     }
 }
