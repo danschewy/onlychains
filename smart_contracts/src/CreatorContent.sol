@@ -15,11 +15,11 @@ contract CreatorContent is ERC1155, Owned{
     string public BASE_URI;
 
     mapping(uint => uint) public pricing;
-
-    constructor(string memory token_uri, address creator) Owned(creator){
+    mapping(uint256 => bool) public valid; 
+    constructor(string memory token_uri, address creator, address currency) Owned(creator){
         BASE_URI = token_uri;
-
-        APE_COIN = ERC20(0x4d224452801ACEd8B2F0aebE155379bb5D594381);
+        owner = creator;
+        APE_COIN = ERC20(currency);
     }
 
     function uri(uint id) public view virtual override returns (string memory) {
@@ -33,9 +33,12 @@ contract CreatorContent is ERC1155, Owned{
     }   
 
     function buyBatch(uint256[] memory ids, uint256[] memory amounts) public {
+        require(ids.length == amounts.length, "Mismatched Array Len");
         uint total;
         for(uint i; i < ids.length; ++i) { 
-            require(balanceOf[msg.sender][i] == 0);       
+            require(balanceOf[msg.sender][ids[i]] == 0);
+            require(amounts[i] == 1, "Only one");
+            require(valid[ids[i]], "Uninitialized");              
             total += pricing[i];  
         }
         SafeTransferLib.safeTransferFrom(APE_COIN, msg.sender, owner, total);
@@ -43,6 +46,7 @@ contract CreatorContent is ERC1155, Owned{
     }   
 
     function setPrice(uint id, uint amount) public onlyOwner{
+        valid[id] = true;
         pricing[id] = amount;
     }
 
