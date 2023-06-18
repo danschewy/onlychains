@@ -20,6 +20,7 @@ struct Tier:
 
 creator_tiers: public(HashMap[address, HashMap[uint8, Tier]]) 
 subs: public(HashMap[address, HashMap[address, Subscription]])
+activated: public(HashMap[address, HashMap[uint8, bool]])
 
 @external 
 def __init__(addy: ERC20):
@@ -31,19 +32,24 @@ def create_tiers(amt: DynArray[uint256, 5], dur: DynArray[uint8, 5], tier_index:
     for i in [0, 1, 2, 3, 4]:
         assert dur[i] < 3
         tier: Tier = Tier ({amount: amt[i], duration: dur[i]})
+        self.activated[msg.sender][tier_index[i]] = True
         self.creator_tiers[msg.sender][tier_index[i]] = tier 
+
 
 @external
 def edit_tier(amt: uint256, dur: uint8, tier_index: uint8):
     assert dur < 3
     tier: Tier = Tier ({amount: amt, duration: dur})
     self.creator_tiers[msg.sender][tier_index] = tier
+    self.activated[msg.sender][tier_index] = True
+
 
 @external 
 def subscribe(creator: address, tier_index: uint8):
     time: uint64 = 0
     sub_tier: Tier = self.creator_tiers[creator][tier_index]
     expiration: uint64 = self.subs[msg.sender][creator].expiration
+    assert self.activated[msg.sender][tier_index] == True
     assert expiration == 0 or convert(block.timestamp, uint64) >= expiration
     if sub_tier.duration == 0:
         time = WEEK
