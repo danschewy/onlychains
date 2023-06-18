@@ -27,7 +27,7 @@ contract CreatorContent is ERC1155, Owned{
     }
 
     function buy(uint id) public {
-        require(balanceOf[msg.sender][id] == 0);
+        require(balanceOf[msg.sender][id] == 0, "Already purchased");
         SafeTransferLib.safeTransferFrom(APE_COIN, msg.sender, owner, pricing[id]);
         _mint(msg.sender, 1, id, "");
     }   
@@ -45,9 +45,13 @@ contract CreatorContent is ERC1155, Owned{
         _batchMint(msg.sender, ids, amounts, "");
     }   
 
-    function setPrice(uint id, uint amount) public onlyOwner{
+    function setPriceInit(uint id, uint amount) public onlyOwner{
         valid[id] = true;
         pricing[id] = amount;
     }
-
+    
+    function editSet(uint id, uint amount, bool state) public onlyOwner{
+        valid[id] = state;
+        pricing[id] = amount;
+    }
 }
