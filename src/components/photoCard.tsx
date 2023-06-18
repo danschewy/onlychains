@@ -1,11 +1,23 @@
+import React from "react";
+import Link from "next/link";
+import { format, parseISO } from "date-fns";
+import Image from "next/image";
+
 export interface PhotoCard {
-  id: string;
-  description: string;
-  image: string;
-  createdAt: string;
+  id: number;
+  title: string;
+  content: string;
+  content_preview: string;
+  image_preview: string;
+  postedDate: Date;
+  userId: string;
+  image: string; // DB stores Array of strings
+  image_author: string;
+  author_name: string;
+  updatedAt: Date;
 }
-export const PhotoCard = () => {
-  // const mockPhoto = {
+export const PhotoCard: React.FC<{ card: PhotoCard }> = ({ card }) => {
+    // const mockPhoto = {
   //   id: "1",
   //   description: "Sexy text",
   //   image: "https://placekitten.com/50/100",
@@ -29,9 +41,9 @@ export const PhotoCard = () => {
     <div className="w-full max-w-sm lg:flex lg:max-w-full">
       <div
         className="h-48 flex-none overflow-hidden rounded-t bg-cover text-center lg:h-auto lg:w-48 lg:rounded-l lg:rounded-t-none"
-        style={{
-          backgroundImage: "url('https://placekitten.com/200/300')",
-        }}
+       style={{
+    backgroundImage: `url(${card?.image || 'https://placekitten.com/200/300'})`,
+  }}
       ></div>
       <div className="flex flex-col justify-between rounded-b border-b border-l border-r border-gray-400 bg-white p-4 leading-normal lg:rounded-b-none lg:rounded-r lg:border-l-0 lg:border-t lg:border-gray-400">
         <div className="mb-8">
@@ -46,24 +58,35 @@ export const PhotoCard = () => {
             Members only
           </p>
           <div className="mb-2 text-xl font-bold text-gray-900">
-            Can coffee make you a better developer?
+            {card?.title || ""}
           </div>
           <p className="text-base text-gray-700">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-            Voluptatibus quia, nulla! Maiores et perferendis eaque,
-            exercitationem praesentium nihil.
+          {card?.content || ''}
           </p>
         </div>
         <div className="flex items-center">
-          <img
+          {/* <img
             className="mr-4 h-10 w-10 rounded-full"
             src="https://placekitten.com/200/300"
             alt="Avatar of Jonathan Reinink"
+          /> */}
+          <Link href="`users/${card.userId}`">
+            <Image
+            className="mr-4 h-10 w-10 rounded-full"
+            // src={card.image_author}
+            src={`${card?.image || 'https://placekitten.com/200/300'}`}
+            alt="Author Avatar"
+            width={50}
+            height={50}
           />
           <div className="text-sm">
-            <p className="leading-none text-gray-900">Jonathan Reinink</p>
-            <p className="text-gray-600">Aug 18</p>
+            <p className="leading-none text-gray-900">{card?.author_name || 'Admin'}</p>
+            <p className="text-gray-600">{format(
+                        parseISO(card.postedDate),
+                        "MMMM dd, yyyy HH:MM"
+                      )}</p>
           </div>
+          </Link>
         </div>
       </div>
     </div>

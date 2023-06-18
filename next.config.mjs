@@ -11,7 +11,7 @@ const config = {
     esmExternals: false, // THIS IS THE FLAG THAT MATTERS
   },
   images: {
-    domains: ["uploadthing.com", "ipfs.io", "localhost", ""],
+    domains: ["uploadthing.com", "ipfs.io", "localhost", "", "placekitten.com"],
   },
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you

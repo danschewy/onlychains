@@ -1,5 +1,47 @@
 # Ape only your chains
 
+`yarn && yarn dev`
+
+## Updating the prisma schema
+
+`yarn prisma db push`
+
+## API Routes
+
+/post/<id> will bring up a specific item and all the user's posts.
+
+```json
+[
+  User {
+  id: '1',
+  role: 'CREATOR',
+  image: null,
+  displayName: null,
+  bio: null,
+  addressETH: null,
+  addressBTC: null,
+  gender: null,
+  createdAt: 2023-06-17T20:52:26.558Z,
+  language: 'en',
+  posts: [{
+    id: 1,
+    authorId: '1',
+    title: 'ti',
+    content: 'on here',
+    contentPreview: 'on...',
+    imagePreview: null,
+    postedDate: 2023-06-17T20:55:04.917Z,
+    images: [],
+    imageAuthor: null,
+    authorName: null,
+    votes_up: null,
+    votes_down: null,
+    updatedAt: null
+  }]
+  }
+]
+```
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
@@ -81,7 +123,25 @@ dont forget uploadthing api key (for now)
 Creator page for each person
 Card to unlock a photo/subscribe to individual
 
-view subscriptions if logged in and authentication
-news page
-top creators list
-feed of all latest posts
+## Boris
+
+1. Read posts
+2. Write post
+3. Edit post
+4. Delete post
+
+Fill out a form to make post
+We make call to db to create user
+We will only send it when use is signed in with wallet
+view subscriptions if logged in and authenticated
+*news page
+*top creators list
+*feed of all latest posts
+
+Take your time do it slow
+
+
+## TODO
+
+404 page for posts
+404 page for users

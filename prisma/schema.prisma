@@ -26,6 +26,8 @@ model User {
   bio         String?
   addressETH  String?
   addressBTC  String?
+  posts       Post[] // One to Many relation
+  // userId      String?
   gender      String?
   following   Follows[] @relation("follower")
   followedBy  Follows[] @relation("following")
@@ -53,16 +55,23 @@ model VerificationToken {
 }
 
 model Post {
-  id         Int       @id @default(autoincrement())
-  title      String?
-  content    String?
-  postedDate DateTime? @default(now())
-  images     String[]
-  userId     String?
-  votes_up   Int?
-  votes_down Int?
-  updatedAt  DateTime? @updatedAt
-  Payment    Payment[]
+  id             Int       @id @default(autoincrement())
+  author         User      @relation(fields: [authorId], references: [id])
+  authorId       String // relation scalar field  (used in the `@relation` attribute above)
+  title          String?
+  content        String?
+  contentPreview String?
+  imagePreview   String?
+  postedDate     DateTime? @default(now())
+  images         String[]
+  // userId          String
+  imageAuthor    String?
+  authorName     String?
+  votes_up       Int?
+  votes_down     Int?
+  updatedAt      DateTime? @updatedAt
+  Payment        Payment[]
+  // user            User      @relation(fields: [userId], references: [id]) // Add this line
 }
 
 enum Role {
@@ -84,4 +93,18 @@ model Payment {
 enum PaymentType {
   TIP
   PURCHASE
+}
+
+// TEMP
+model Note {
+  id        String   @id @default(uuid())
+  title     String   @unique
+  content   String
+  category  String?
+  published Boolean? @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map(name: "notes")
 }

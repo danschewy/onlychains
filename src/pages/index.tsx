@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import { type InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { MyUploadButton } from "~/components/uploadButton";
 
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 import { getImages } from "~/utils/ipfs";
 
 export const getServerSideProps = async () => {
