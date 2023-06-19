@@ -1,51 +1,74 @@
 import { type AppType } from "next/app";
 
 import { api } from "~/utils/api";
-
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "~/styles/globals.css";
-
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+// import { trpc } from "~/utils/trpc";
 import "@rainbow-me/rainbowkit/styles.css";
-import {
-  ConnectButton,
-  getDefaultWallets,
-  RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, WagmiConfig, mainnet } from "wagmi";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { publicProvider } from "wagmi/providers/public";
+import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
 
-const { chains, publicClient } = configureChains(
-  [mainnet],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID ?? "" }), publicProvider()]
+import { SessionProvider } from "next-auth/react";
+import type { AppProps } from "next/app";
+import "./styles.css";
+
+const getSiweMessageOptions: GetSiweMessageOptions = () => ({
+  statement: "Sign in to OnlyChains",
+});
+
+import { WagmiConfig, configureChains, mainnet, sepolia, createConfig } from "wagmi";
+
+import { publicProvider } from "wagmi/providers/public";
+import {
+  type GetSiweMessageOptions,
+  RainbowKitSiweNextAuthProvider,
+} from "@rainbow-me/rainbowkit-siwe-next-auth";
+
+const projectId = "OnlyChains";
+
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [sepolia],
+  // [mainnet],
+  [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
   appName: "OnlyChains",
-  projectId: "YOUR_PROJECT_ID",
+  projectId,
   chains,
 });
 
-const wagmiConfig = createConfig({
+const config = createConfig({
   autoConnect: true,
-  connectors,
   publicClient,
+  connectors,
+  webSocketPublicClient,
 });
 
-const MyApp: AppType = ({ Component, pageProps }) => {
+const MyApp: AppType = ({ Component, pageProps }: AppProps) => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={[mainnet]} coolMode>
-        <section
-          data-testid="header"
-          className="absolute top-0 z-50 flex w-screen flex-row justify-between p-4"
+    <WagmiConfig config={config}>
+      <SessionProvider refetchInterval={0} session={pageProps.session}>
+        <RainbowKitSiweNextAuthProvider
+          getSiweMessageOptions={getSiweMessageOptions}
         >
-          <span className="text-xl font-extrabold tracking-tight text-white ">
-            Only<span className="text-[hsl(280,100%,70%)]">Chains</span>
-          </span>
-          <ConnectButton />
-        </section>
-        <Component {...pageProps} />
-      </RainbowKitProvider>
+          <RainbowKitProvider chains={[mainnet]} coolMode>
+            <ToastContainer />
+
+            <section
+              data-testid="header"
+              className="absolute top-0 z-50 flex w-screen flex-row justify-between p-4"
+            >
+              <span className="text-xl font-extrabold tracking-tight text-white ">
+                Only<span className="text-[hsl(280,100%,70%)]">Chains</span>
+              </span>
+              <ConnectButton />
+            </section>
+            <Component {...pageProps} />
+          </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
+      </SessionProvider>
     </WagmiConfig>
   );
 };
