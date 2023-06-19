@@ -2,6 +2,19 @@
 
 `yarn && yarn dev`
 
+## Testing with Foundry
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+#(add installed .foundry folder to path somehow)
+foundryup
+sudo rm /usr/local/bin/chisel
+sudo mv /usr/local/bin/.foundry/bin/\* /usr/local/bin/
+source ~/.bashrc
+```
+
+* Deploy the test contract
+
 ## Updating the prisma schema
 
 `yarn prisma db push`

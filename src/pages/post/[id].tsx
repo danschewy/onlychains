@@ -25,9 +25,13 @@ export interface Post {
   id: number;
   title: string;
   content: string;
-  updateAt: Date;
+  updatedAt: Date;
   images: string[];
   postedDate: string;
+  content_preview: string;
+  image_preview: string;
+  createdAt: Date;
+  userId: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -86,21 +90,21 @@ return {
 
 }
 
-// type AuthenticatedPageProps = InferGetServerSidePropsType<
-//   typeof getServerSideProps
-// >;
+type AuthenticatedPageProps = InferGetServerSidePropsType<
+  typeof getServerSideProps
+>;
 
 type Props = {
   user: User;
   post: Post;
 };
-// export function AuthenticatedPage({ address }: AuthenticatedPageProps) {
-//   return address ? (
-//     <h1>Authenticated as {address}</h1>
-//   ) : (
-//     <h1>Unauthenticated</h1>
-//   );
-// }
+export function AuthenticatedPage({ address }: AuthenticatedPageProps) {
+  return address ? (
+    <h1>Authenticated as {address}</h1>
+  ) : (
+    <h1>Unauthenticated</h1>
+  );
+}
 
 const UserPage = (props: Props) => {
   const { user } = props;

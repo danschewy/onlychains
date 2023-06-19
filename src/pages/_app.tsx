@@ -7,22 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 // import { trpc } from "~/utils/trpc";
 import "@rainbow-me/rainbowkit/styles.css";
-import {
-  RainbowKitProvider,
-  getDefaultWallets,
-  connectorsForWallets,
-} from "@rainbow-me/rainbowkit";
-import {
-  argentWallet,
-  trustWallet,
-  ledgerWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-import {
-  RainbowKitSiweNextAuthProvider,
-  GetSiweMessageOptions,
-} from "@rainbow-me/rainbowkit-siwe-next-auth";
+import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
 
-import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import "./styles.css";
@@ -31,18 +17,19 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
   statement: "Sign in to OnlyChains",
 });
 
-import "./styles.css";
-// import { alchemyProvider } from "wagmi/providers/alchemy";
-
-import { WagmiConfig, configureChains, mainnet, createConfig } from "wagmi";
-
+import { WagmiConfig, configureChains, mainnet, sepolia, createConfig } from "wagmi";
 
 import { publicProvider } from "wagmi/providers/public";
+import {
+  type GetSiweMessageOptions,
+  RainbowKitSiweNextAuthProvider,
+} from "@rainbow-me/rainbowkit-siwe-next-auth";
 
 const projectId = "OnlyChains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet],
+  [sepolia],
+  // [mainnet],
   [publicProvider()]
 );
 

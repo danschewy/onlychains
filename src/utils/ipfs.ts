@@ -1,5 +1,6 @@
 import { create } from "ipfs-http-client";
 import { encrypt } from "./encryption";
+import { prisma } from "~/server/db";
 
 export const ipfs = create({
   host: "127.0.0.1",
@@ -24,7 +25,7 @@ export async function uploadToIPFS(filePath: string): Promise<boolean> {
 
     // convert the file to a format that can be uploaded to IPFS
     const newId = crypto.randomUUID();
-    const fileName = "/" + newId + '.jpeg';
+    const fileName = "/" + newId + ".jpeg";
 
     // upload the file
     await ipfs.files.write(fileName, fileText, {
@@ -55,4 +56,35 @@ export async function getImages() {
   } catch (error) {
     throw error;
   }
+}
+
+export async function getUsers() {
+  const users = (await prisma.user.findMany()).map((user) => {
+    return {
+      ...user,
+      createdAt: null,
+      updatedAt: null,
+    };
+  });
+  return users;
+}
+
+export async function getUserAndPosts(id: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      posts: true,
+    },
+  });
+  return {
+    ...user,
+    createdAt: null,
+    updatedAt: null,
+    posts:
+      user?.posts?.map((post) => {
+        return { ...post, postedDate: null };
+      }) ?? null,
+  };
 }
