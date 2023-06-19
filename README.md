@@ -2,6 +2,94 @@
 
 `yarn && yarn dev`
 
+## Features:
+
+* Connect a wallet to verify ownership (MetaMask, Coinbase Wallet, Rainbow, WalletConnect)
+
+![wallet](wallet.png)
+
+* Creator page for each user
+
+![creator](profile.png)
+
+* Upload your encrypted photos to decentralized IPFS network
+* Unlock a photo/subscribe to individual with a smart contract
+
+* View list of top creators
+
+![creators](creators.png)
+
+
+## MAINNET Smart contracts
+
+`testtoken.sol` - `0xfabeeDC1731A50b227796Fbd624dB0E600d545f2`
+
+`creators.sol` - `0xe8754434a4BA21B0863B215816102E58273BB950`
+
+## Vyper Testnet Contract
+
+https://sepolia.etherscan.io/address/0xc744614ae70b4fd321a22f6035e344a99b43a6b4
+
+
+* Create pricing tiers on testnet https://sepolia.etherscan.io/tx/0x470719f68d25fbf18057543582d0f3b1e8b51b4514d214f2848602d904a4bced
+
+![blockchain_response](blockchain_resp.png)
+
+* Subscribe to a pricing tier https://sepolia.etherscan.io/tx/0x259cdb1cd7d905a0c66a2f98dd6e340c48112679f0b8af52bc97d5c7d4ec3ef0
+
+
+## Updating your profile as a creator
+
+Can be done through /profile
+
+```json
+POST /api/updateProfile
+{
+displayName: 'bbgrl',
+gender: 'female',
+bio: 'seksy1',
+isCreator: true,
+addressETH: '0xAED0F8d9eD05e3723e9729fEc38252B94a5976eD'
+}
+```
+
+This would interact with the Vyper smart contract and create tiers
+https://github.com/danschewy/onlychains/blob/main/smart_contracts/src/Subscription.vy
+
+```python
+@external
+def create_tiers(amt: DynArray[uint256, 5], dur: DynArray[uint8, 5], tier_index: DynArray[uint8, 5]):
+assert len(amt) == len(dur) and len(amt) == len(tier_index)
+for i in [0, 1, 2, 3, 4]:
+assert dur[i] < 3
+tier: Tier = Tier ({amount: amt[i], duration: dur[i]})
+self.activated[msg.sender]tier_index[i]] = True
+self.creator_tiers[msg.sender]tier_index[i]] = tier
+```
+
+Now you can subscribe to these tiers as a USER
+
+![vyper](vyper.png)
+
+
+```python
+@external
+def subscribe(creator: address, tier_index: uint8):
+time: uint64 = 0
+sub_tier: Tier = self.creator_tiers[creator][tier_index]
+expiration: uint64 = self.subs[msg.sender][creator].expiration
+assert self.activated[msg.sender][tier_index] == True
+assert expiration == 0 or convert(block.timestamp, uint64) >= expiration
+if sub_tier.duration == 0:
+time = WEEK
+elif sub_tier.duration == 1:
+time = MONTH
+else:
+time = YEAR
+    self.subs[msg.sender][creator].expiration += convert(block.timestamp, uint64) + time
+    APE_COIN.transferFrom(msg.sender, creator, sub_tier.amount)
+```
+
 ## Testing with Foundry
 
 ```bash
@@ -131,30 +219,3 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 ### ipfs setup
 
 run `ipfs daemon` after/before `npm run dev`
-dont forget uploadthing api key (for now)
-
-Creator page for each person
-Card to unlock a photo/subscribe to individual
-
-## Boris
-
-1. Read posts
-2. Write post
-3. Edit post
-4. Delete post
-
-Fill out a form to make post
-We make call to db to create user
-We will only send it when use is signed in with wallet
-view subscriptions if logged in and authenticated
-*news page
-*top creators list
-*feed of all latest posts
-
-Take your time do it slow
-
-
-## TODO
-
-404 page for posts
-404 page for users
